@@ -46,14 +46,12 @@ export default class Physics {
         if (((ball.x + velocityX) <= (playerOne.x + paddleWidth)) && (playerOne.y < (ball.y + 8)) && ((ball.y + 8) < (playerOne.y + paddleHeight))) {
             velocityX = Math.abs(velocityX);
             velocityY = Math.abs(velocityY);
-            console.log("hit player 1")
         }
 
         // checking ball vs paddle hits CPU
         if (((ball.x + 16 + velocityX) >= playerTwo.x) && (playerTwo.y < (ball.y + 8)) && ((ball.y + 8) < (playerTwo.y + paddleHeight))) {
             velocityX = -velocityX;
             velocityY = -velocityY;
-            console.log("hit player 2")
         }
 
         ball.setVelocity(velocityX, velocityY);
