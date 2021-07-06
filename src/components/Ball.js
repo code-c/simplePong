@@ -4,7 +4,6 @@ author: Codie Cottrell
 import * as PIXI from "pixi.js";
 import ballIMG from './images/ball.png';
 
-let startSpeed = 3;
 let ball;
 let ballWidth = 16;
 let initX, initY;
@@ -12,7 +11,7 @@ let initX, initY;
 export default class Player extends PIXI.Sprite {
     constructor(x = 0, y = 0) {
         // like PIXI.texture.from to create sprite from texture
-        createBall();
+        loadBall();
         //work with it set values
         super(ball);
         this.loop = false;
@@ -45,6 +44,6 @@ export default class Player extends PIXI.Sprite {
 }
 
 //set the image as the player
-function createBall() {
+function loadBall() {
     ball = new PIXI.Texture.from(ballIMG);
 }

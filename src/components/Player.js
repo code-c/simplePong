@@ -21,6 +21,7 @@ export default class Player extends PIXI.Sprite {
         this.scale.y = 2;
         lowerBound = lower;
         upperBound = upper;
+        this.moving = false;
     }
 
     moveUp() {
