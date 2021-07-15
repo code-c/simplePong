@@ -1,10 +1,10 @@
 import './App.css';
-import Render from './components/Render';
+import Pong from './components/Pong';
 
 function App() {
   return (
     <div className="App">
-      <Render /> 
+      <Pong /> 
     </div>
   );
 }

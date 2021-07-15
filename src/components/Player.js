@@ -22,6 +22,7 @@ export default class Player extends PIXI.Sprite {
         lowerBound = lower;
         upperBound = upper;
         this.moving = false;
+        this.score = 0;
     }
 
     moveUp() {
@@ -35,6 +36,10 @@ export default class Player extends PIXI.Sprite {
         if ((this.y + 48 + speed) <= upperBound){ 
             this.y += speed;
         }
+    }
+
+    scored() {
+        this.score += 1;
     }
     
 }

@@ -36,8 +36,10 @@ export default class Physics {
 
         // check if ball went out 
         if((ball.x + velocityX) > maxWidth) {
+            playerOne.scored();
             this.inPlay = false;
         } else if ((ball.x + velocityX) < minWidth){
+            playerTwo.scored();
             this.inPlay = false;
         }
 
