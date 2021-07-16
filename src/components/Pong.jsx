@@ -13,6 +13,7 @@ import ScoreBoard from './ScoreBoard.js';
 import '../style.css';
 
 let numPlayers;
+let gameStart;
 let gameFinish = false;
 
 // the render component
@@ -95,11 +96,11 @@ export default class Render extends React.Component {
             //set stage
             stage = new PIXI.Container();
 
-            // create player
+            // create and load players to stage
             loadPlayers();
 
-            // load ball
-            ball = new Ball((pxWidth/2)-16, (pxHeight/2)-8);
+            // load ball to stage
+            ball = new Ball((pxWidth/2), (pxHeight/2));
             stage.addChild(ball);
 
             scoreBoard = new ScoreBoard(playerOne, playerTwo);
@@ -109,6 +110,18 @@ export default class Render extends React.Component {
             PIXI.Ticker.shared.add(() => renderer.render(stage));
             PIXI.Ticker.shared.add(gameLoop);
         });
+
+        // function startGame() {
+        //     // loops till start of game
+        //     if (!gameStart) {
+        //         console.log("didnt start")
+        //         return true;
+        //     }
+        //     else if(gameStart){
+        //         console.log("did start")
+        //         return false;
+        //     }
+        // }
 
         // functions for getting input from the keyboard
         function keysDown(keyEvent) {
@@ -177,8 +190,9 @@ export default class Render extends React.Component {
 
             const pxW = renderer.screen.width;
             const pxH = renderer.screen.height;
-            playerOne = new Player(0, ((pxH/2)-24), 0, pxH);
-            playerTwo = new Player((pxW-24), ((pxH/2)-24), 0, pxH);
+            // 16 pixels since its the 1/2 the width of the paddles
+            playerOne = new Player(16, (pxH/2), 0, pxH);
+            playerTwo = new Player((pxW-16), (pxH/2), 0, pxH);
 
 
             stage.addChild(playerOne);
@@ -205,6 +219,8 @@ export default class Render extends React.Component {
     // update the number of players
     componentDidUpdate() {
         numPlayers = this.state.numPlayers;
+        console.log("compoenent did an update")
+        gameStart = true;
     }
 
     render() {
