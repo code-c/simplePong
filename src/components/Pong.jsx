@@ -190,8 +190,9 @@ export default class Render extends React.Component {
 
             const pxW = renderer.screen.width;
             const pxH = renderer.screen.height;
-            playerOne = new Player(0, ((pxH/2)-24), 0, pxH);
-            playerTwo = new Player((pxW-24), ((pxH/2)-24), 0, pxH);
+            // 16 pixels since its the 1/2 the width of the paddles
+            playerOne = new Player(16, (pxH/2), 0, pxH);
+            playerTwo = new Player((pxW-16), (pxH/2), 0, pxH);
 
 
             stage.addChild(playerOne);

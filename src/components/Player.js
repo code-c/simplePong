@@ -17,6 +17,7 @@ export default class Player extends PIXI.Sprite {
         this.loop = false;
         this.y = yStart;
         this.x = xStart;
+        this.anchor.set(0.5, 0.5);
         this.scale.x = 2;
         this.scale.y = 2;
         lowerBound = lower;
