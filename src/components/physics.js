@@ -26,11 +26,11 @@ export default class Physics {
             velocityY = 0;
         }
 
-        //ball boundary check and set direction
-        if((ball.y + 16 + velocityY) >= maxHeight) {
+        //ball wall boundary check and set direction
+        if((ball.y + 8 + velocityY) >= maxHeight) {
             velocityY = -velocityY; // go the other way
         }
-        else if ((ball.y + velocityY) <= minHeight){
+        else if ((ball.y - 8 - velocityY) <= minHeight){
             velocityY = Math.abs(velocityY); // make positive again to go back
         } 
 
@@ -45,19 +45,19 @@ export default class Physics {
 
         //checking ball vs paddle hits
             // front of paddle in x
-        if ((ball.x + velocityX) <= (playerOne.x + paddleWidth)){
+        if ((ball.x - 8 + velocityX) <= (playerOne.x + paddleWidth)){
             // top half of paddle
              if ((playerOne.y < (ball.y + 8)) && ((ball.y + 8) < (playerOne.y + paddleHeight/2))) {
                 velocityX = Math.abs(velocityX);
                 velocityY = Math.abs(velocityY)-2;
              } 
              // middle of the paddle
-             else if ((ball.y + 8) === (playerOne.y + paddleHeight/2)) {
+             else if ((ball.y) === (playerOne.y + paddleHeight/2)) {
                 velocityX = Math.abs(velocityX);
                 velocityY = Math.abs(velocityY);
              }
              // bottm half of paddle
-             else if (((playerOne.y + paddleHeight/2) < (ball.y + 8)) && ((ball.y + 8) < (playerOne.y + paddleHeight))) {
+             else if (((playerOne.y + paddleHeight/2) < (ball.y)) && ((ball.y) < (playerOne.y + paddleHeight))) {
                 velocityX = Math.abs(velocityX);
                 velocityY = Math.abs(velocityY)+2;
              }
@@ -65,18 +65,18 @@ export default class Physics {
 
         // checking ball vs paddle hits CPU/player2
             // front of paddle y
-        if ((ball.x + 16 + velocityX) >= playerTwo.x){
-            if ((playerTwo.y < (ball.y + 8)) && ((ball.y + 8) < (playerTwo.y + paddleHeight/2))) {
+        if ((ball.x + 8 + velocityX) >= playerTwo.x){
+            if ((playerTwo.y < (ball.y)) && ((ball.y) < (playerTwo.y + paddleHeight/2))) {
                 velocityX = -velocityX;
                 velocityY = -velocityY -2;
             }
             // midle of the paddle 
-            else if ((ball.y + 8) === (playerTwo.y + paddleHeight/2)) {
+            else if ((ball.y) === (playerTwo.y + paddleHeight/2)) {
                 velocityX = - velocityX;
                 velocityY = -Math.abs(velocityY);
              }
             // bottom of the paddle
-            if (((playerTwo.y + paddleHeight/2) < (ball.y + 8)) && ((ball.y + 8) <= (playerTwo.y + paddleHeight))) {
+            if (((playerTwo.y + paddleHeight/2) < (ball.y)) && ((ball.y) <= (playerTwo.y + paddleHeight))) {
                 velocityX = -velocityX;
                 velocityY = -velocityY + 2;
             }

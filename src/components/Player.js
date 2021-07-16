@@ -25,6 +25,7 @@ export default class Player extends PIXI.Sprite {
         this.score = 0;
     }
 
+
     moveUp() {
         if ((this.y - speed) >= lowerBound){
             this.y -= speed;
