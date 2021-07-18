@@ -4,7 +4,7 @@ author: Codie Cottrell
 import * as PIXI from "pixi.js";
 import paddleIMG from './images/paddle.png';
 
-let speed = 5;
+let speed = 6;
 let paddle;
 let lowerBound, upperBound;
 
@@ -28,14 +28,14 @@ export default class Player extends PIXI.Sprite {
 
 
     moveUp() {
-        if ((this.y - speed) >= lowerBound){
+        if ((this.y - 24 - speed) >= lowerBound){
             this.y -= speed;
         }
     }
 
     // using 48 since the image is 24 pixels high and is scaled 2x
     moveDown() {
-        if ((this.y + 48 + speed) <= upperBound){ 
+        if ((this.y + 24 + speed) <= upperBound){ 
             this.y += speed;
         }
     }

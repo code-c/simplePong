@@ -1,3 +1,5 @@
+import * as PIXI from "pixi.js";
+
 let maxWidth, maxHeight;
 let minWidth = 0;
 let minHeight = 0;
@@ -16,7 +18,7 @@ export default class Physics {
         maxWidth = width;
         maxHeight = height;
         this.inPlay = false;
-        lastBounce = [width/2, height/2, 90]; // initial trajectory vector (x, y, angle)
+        lastBounce = [width/2, height/2]; // initial trajectory vector (x, y, angle)
     }
 
     checkPositions(playerOne, playerTwo, ball) {
@@ -32,17 +34,18 @@ export default class Physics {
         }
 
         //ball wall boundary check and set direction
-        // upper
-        if((ball.y + 8 + velocityY) >= maxHeight) {
+        // lower
+        if((ball.y + 8) >= maxHeight) {
             velocityY = -velocityY; // go the other way
             // storeing x, y
-            // lastBounce[2] = calculuateAngle(maxHeight, ball.y)
-            lastBounce[0] = maxHeight;
-            lastBounce[1] = ball.y;
+            // lastBounce[2] = approachAngle(ball.y, maxHeight, time)
+            lastBounce[0] = ball.x;
+            lastBounce[1] = maxHeight;
+            lastBounce[3] = PIXI.Ticker.shared.lastTime;
             console.log(lastBounce);
         }
-        // lower
-        else if ((ball.y - 8 - velocityY) <= minHeight){
+        // upper
+        else if ((ball.y - 8) <= minHeight){
             velocityY = Math.abs(velocityY); // make positive again to go back
         } 
 
@@ -57,11 +60,11 @@ export default class Physics {
 
         //checking ball vs paddle hits
             // front of paddle in x
-        if ((ball.x - 8) <= (playerOne.x + paddleWidth/2)){
+        if ((ball.x - 8) <= (playerOne.x + paddleWidth/2) && (ball.x > (playerOne.x - paddleWidth/2))){
             // top half of paddle
-             if (((playerOne.y-halfHeight) < ball.y) && (ball.y < playerOne.y)) {
+             if (((playerOne.y-halfHeight) <= (ball.y + 8)) && (ball.y < playerOne.y)) {
                 velocityX = Math.abs(velocityX);
-                velocityY = Math.abs(velocityY)-2;
+                velocityY = Math.abs(velocityY)-4;
              } 
              // middle of the paddle
              else if (ball.y === playerOne.y) {
@@ -69,28 +72,28 @@ export default class Physics {
                 velocityY = Math.abs(velocityY);
              }
              // bottm half of paddle
-             else if ((playerOne.y < ball.y) && (ball.y < (playerOne.y + halfHeight))) {
+             else if ((playerOne.y < ball.y) && ((ball.y - 8) <= (playerOne.y + halfHeight))) {
                 velocityX = Math.abs(velocityX);
-                velocityY = Math.abs(velocityY)+2;
+                velocityY = Math.abs(velocityY)+4;
              }
         }
 
         // checking ball vs paddle hits CPU/player2
             // front of paddle y
-        if ((ball.x + 8) >= playerTwo.x - paddleWidth/2){
-            if (((playerTwo.y - halfHeight) < ball.y) && (ball.y < playerTwo.y)) {
+        if (((ball.x + 8) >= (playerTwo.x - paddleWidth/2)) && (ball.x < (playerTwo.x + paddleWidth/2))){
+            if (((playerTwo.y - halfHeight) <= (ball.y + 8)) && (ball.y < playerTwo.y)) {
                 velocityX = -velocityX;
-                velocityY = -velocityY -2;
+                velocityY = -velocityY -4;
             }
             // midle of the paddle 
             else if (ball.y === playerTwo.y) {
                 velocityX = - velocityX;
-                velocityY = -Math.abs(velocityY);
+                velocityY = -velocityY;
              }
             // bottom of the paddle
-            if ((playerTwo.y < ball.y) && (ball.y < (playerTwo.y + halfHeight))) {
+            else if ((playerTwo.y < ball.y) && ((ball.y - 8) <= (playerTwo.y + halfHeight))) {
                 velocityX = -velocityX;
-                velocityY = -velocityY + 2;
+                velocityY = -velocityY + 4;
             }
 
         }
@@ -98,8 +101,18 @@ export default class Physics {
         ball.setVelocity(velocityX, velocityY);
     }
 
-    static calculateAngle() {
-        
-    }
+    // calculate the approach angle here 
+    // static approachAngle(x, y, time) {
+    //     // triangle genometry, a, b, c are the lengths of base, height and hypotenuse
+
+    //     // find length of a by taking x values and subtracting
+    //     const lengthA = Math.abs(lastBounce[1] - x);
+    //     // find length of b by taking y values and subtracting
+    //     const lengthB = Math.abs(lastBounce[0] - y);
+    //     // find the length of the hypotenuse by pythagorean theroem
+    //     const lengthC = Math.abs(Math.sqrt(Math.pow(lengthA, 2), Math.pow(lengthB, 2)));
+
+    //     // calculate the angle of approach
+    // }
 
 }
