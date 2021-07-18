@@ -13,8 +13,10 @@ import ScoreBoard from './ScoreBoard.js';
 import '../style.css';
 
 let numPlayers;
-let gameStart;
+let gameStart = false;
 let gameFinish = false;
+let lastCount = 0;
+let currentCount;
 
 // the render component
 export default class Render extends React.Component {
@@ -42,6 +44,8 @@ export default class Render extends React.Component {
     componentDidMount() {
 
         numPlayers = this.state.numPlayers;
+
+        // setting the win text parameters
         const win = new PIXI.Text('Player One WINS!',
                     {fontFamily: 'Arial',
                     fontSize: 36,
@@ -51,12 +55,26 @@ export default class Render extends React.Component {
                     );
         win.anchor.set(.5,.5);
 
+        // setting the countdown text parameters
+        const countDown = new PIXI.Text('3',
+                    {fontFamily: 'Arial',
+                    fontSize: 36,
+                    fontWeight: 'bold',
+                    fill: ['#ffffff'],
+                    strokeThickness: 5,}
+                    );
+        countDown.anchor.set(.5,.5);
+
+        let count = 4;
+
         // calculate pixel width needed
         const pxWidth = 600;
         const pxHeight = 400;
         // set final win text to center
         win.x = pxWidth/2;
         win.y = pxHeight/2;
+        countDown.x = pxWidth/2;
+        countDown.y = pxHeight/2;
 
         // PIXI renderer and settings
         const renderer = PIXI.autoDetectRenderer({
@@ -78,7 +96,8 @@ export default class Render extends React.Component {
         let cpu = new CPU();
 
         // append to the body
-        document.body.appendChild(renderer.view);
+        // use this to place to whatever div you want it in
+        document.getElementById("App").appendChild(renderer.view);
 
         // listen for keys pressed
         window.addEventListener("keydown", keysDown);
@@ -132,16 +151,51 @@ export default class Render extends React.Component {
             keys[keyEvent.keyCode] = false;
         }
 
+
+        // store the last ticker update and count down one
+        function countdown(){
+            // things to do everytime
+            stage.addChild(countDown);
+            ball.reset();
+
+            // store last frame updates time
+            currentCount = PIXI.Ticker.shared.lastTime;
+            // console.log("current Time", currentCount);
+            // console.log("last time: ", lastCount)
+            // console.log("difference:", (currentCount - lastCount))
+            if((currentCount - lastCount) > 800){
+                // update the text on screen
+                countDown.text = count - 1;
+
+                //decrement the count
+                count--;
+
+                // set last count to the current
+                lastCount = currentCount;
+
+                console.log(count);
+            }
+        }
+
         function gameLoop() {
             // check if game ended
             if (gameFinish === true) {
                 PIXI.Ticker.shared.stop();
             }
 
+            // check if number of players are set and if so start countdown loop
+            if((numPlayers > 0) && !gameStart) {
+                countdown()
+                if (count === 0) {
+                    stage.removeChild(countDown);
+                    gameStart = true;
+                }
+            }
+
             // move the ball
             ball.move();
 
-            if(numPlayers > 0) {
+            if((numPlayers > 0) && gameStart) {
                 //if single player or two player is selected player1 plays
                 if(numPlayers >= 1 && numPlayers < 2){
                     // player one UP (W)
@@ -197,7 +251,6 @@ export default class Render extends React.Component {
 
             stage.addChild(playerOne);
             stage.addChild(playerTwo);
-
         }
 
         function checkScore() {
@@ -220,7 +273,6 @@ export default class Render extends React.Component {
     componentDidUpdate() {
         numPlayers = this.state.numPlayers;
         console.log("compoenent did an update")
-        gameStart = true;
     }
 
     render() {
