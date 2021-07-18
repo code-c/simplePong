@@ -39,10 +39,10 @@ export default class Physics {
             velocityY = -velocityY; // go the other way
             // storeing x, y
             // lastBounce[2] = approachAngle(ball.y, maxHeight, time)
-            lastBounce[0] = ball.x;
-            lastBounce[1] = maxHeight;
-            lastBounce[3] = PIXI.Ticker.shared.lastTime;
-            console.log(lastBounce);
+            // lastBounce[0] = ball.x;
+            // lastBounce[1] = maxHeight;
+            // lastBounce[3] = PIXI.Ticker.shared.lastTime;
+            // console.log(lastBounce);
         }
         // upper
         else if ((ball.y - 8) <= minHeight){
@@ -83,7 +83,7 @@ export default class Physics {
         if (((ball.x + 8) >= (playerTwo.x - paddleWidth/2)) && (ball.x < (playerTwo.x + paddleWidth/2))){
             if (((playerTwo.y - halfHeight) <= (ball.y + 8)) && (ball.y < playerTwo.y)) {
                 velocityX = -velocityX;
-                velocityY = -velocityY -4;
+                velocityY = -velocityY - 4;
             }
             // midle of the paddle 
             else if (ball.y === playerTwo.y) {
@@ -93,7 +93,7 @@ export default class Physics {
             // bottom of the paddle
             else if ((playerTwo.y < ball.y) && ((ball.y - 8) <= (playerTwo.y + halfHeight))) {
                 velocityX = -velocityX;
-                velocityY = -velocityY + 4;
+                velocityY = Math.abs(velocityY) + 4;
             }
 
         }

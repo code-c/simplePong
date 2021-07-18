@@ -17,6 +17,8 @@ export default class Player extends PIXI.Sprite {
         this.loop = false;
         this.y = yStart;
         this.x = xStart;
+        this.initY = yStart;
+        this.initX = xStart;
         this.anchor.set(0.5, 0.5);
         this.scale.x = 2;
         this.scale.y = 2;
@@ -42,6 +44,12 @@ export default class Player extends PIXI.Sprite {
 
     scored() {
         this.score += 1;
+    }
+
+    reset() {
+        this.y = this.initY;
+        this.x = this.initX;
+        this.score = 0;
     }
     
 }

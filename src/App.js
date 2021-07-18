@@ -7,7 +7,7 @@ function App() {
       <div className="upper">
         <h1>PONG</h1>
       </div>
-      <div id="App" className="App">
+      <div id="App" className="App gameContainer">
         <Pong /> 
       </div>
     </div>
