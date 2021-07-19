@@ -1,7 +1,7 @@
 import React from 'react';
 
 // styles
-import '../style.css';
+import './style.css';
 
 export default class Menu extends React.Component {
     constructor() {
