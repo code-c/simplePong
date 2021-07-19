@@ -12,36 +12,54 @@ import ScoreBoard from './ScoreBoard.js';
 //style
 import '../style.css';
 
-let numPlayers;
-let gameStart;
-let gameFinish = false;
+// global parameters for PIXI update loop
+let numPlayers; // number of players in the game
+let gameStart = false; // whether then game has started
+let gameFinish = false; // whether the game has finished
+let lastCount = 0; // the last time the start counter was updated
+let currentCount; // the current time of the PIXI.Ticker used for the counter
+let reset = false; // param to pass state to game logic
 
 // the render component
 export default class Render extends React.Component {
+    // contructor using the state for the menu component updates
     constructor() {
         super();
         this.state = {
             numPlayers: 0,
-            started: false
+            started: false,
+            reset: false
         }
     }
 
-    checkState = () => {
-        console.log(this.state.numPlayers)
-        if(this.state.numPlayers !== 0 ){
-            this.setState({started: true})
-        }
+    // useless test function
+    // checkState = () => {
+    //     console.log(this.state.numPlayers)
+    //     if(this.state.numPlayers !== 0 ){
+    //         this.setState({started: true})
+    //     }
+    // }
+    // reset the game
+    reset = (event) => {
+        this.setState({reset: event.target.value});
+        this.setState({started: false});
+        this.setState({numPlayers: 0});
     }
-
-    setPlayers = (menuData) => {
-        this.setState({numPlayers: menuData})
-        this.setState({started: true})
+    // call back function for the menu to set number of players
+    setPlayers = (playerSelect) => {
+        this.setState({numPlayers: playerSelect});
+        this.setState({reset: false});
+        this.setState({started: true});
     }
 
     //using componenet did mount for PIXI game loop
     componentDidMount() {
 
+        // set the number of player to the current state of players which
+        // should be set to 0 at this time
         numPlayers = this.state.numPlayers;
+
+        // setting the win text parameters
         const win = new PIXI.Text('Player One WINS!',
                     {fontFamily: 'Arial',
                     fontSize: 36,
@@ -51,12 +69,26 @@ export default class Render extends React.Component {
                     );
         win.anchor.set(.5,.5);
 
+        // setting the countdown text parameters
+        const countDown = new PIXI.Text('3',
+                    {fontFamily: 'Arial',
+                    fontSize: 50,
+                    fontWeight: 'bold',
+                    fill: ['#ffffff'],
+                    strokeThickness: 5,}
+                    );
+        countDown.anchor.set(.5,.5);
+        // initializing the count to +1 that of the countdown time (3)
+        let count = 4;
+
         // calculate pixel width needed
         const pxWidth = 600;
         const pxHeight = 400;
         // set final win text to center
         win.x = pxWidth/2;
         win.y = pxHeight/2;
+        countDown.x = pxWidth/2;
+        countDown.y = pxHeight/2;
 
         // PIXI renderer and settings
         const renderer = PIXI.autoDetectRenderer({
@@ -70,6 +102,10 @@ export default class Render extends React.Component {
         // declare variables being used regularly
         let stage;
         let keys = {};
+        let touches = {
+            up: false,
+            down: false
+        };
         let playerOne;
         let playerTwo;
         let ball;
@@ -78,11 +114,15 @@ export default class Render extends React.Component {
         let cpu = new CPU();
 
         // append to the body
-        document.body.appendChild(renderer.view);
+        // use this to place to whatever div you want it in
+        document.getElementById("App").appendChild(renderer.view);
 
         // listen for keys pressed
         window.addEventListener("keydown", keysDown);
         window.addEventListener("keyup", keysUp);
+        window.addEventListener('touchstart', startTouch);
+        window.addEventListener('touchmove', touchMove);
+        window.addEventListener('touchend', cancelTouch);
         
         //create the PIXI loader
         const loader = new PIXI.Loader();
@@ -111,45 +151,108 @@ export default class Render extends React.Component {
             PIXI.Ticker.shared.add(gameLoop);
         });
 
-        // function startGame() {
-        //     // loops till start of game
-        //     if (!gameStart) {
-        //         console.log("didnt start")
-        //         return true;
-        //     }
-        //     else if(gameStart){
-        //         console.log("did start")
-        //         return false;
-        //     }
-        // }
-
         // functions for getting input from the keyboard
         function keysDown(keyEvent) {
             keys[keyEvent.keyCode] = true;
+            keyEvent.preventDefault();
         }
 
         function keysUp(keyEvent) {
             keys[keyEvent.keyCode] = false;
+            keyEvent.preventDefault();
+        }
+
+        function startTouch(touchEvent) {
+            // get the coordinates of the game div
+            var rect = document.getElementById("App").getBoundingClientRect();
+            // get the touch location
+            const currentTouch = touchEvent.touches[0].screenY;
+            // check of touch is in the element on top or bottom and store relavent move
+            if ((currentTouch > rect.top) && (currentTouch < (rect.top + pxHeight/2))) {
+                touches.down = false;
+                touches.up = true;
+            } else if ((currentTouch > (rect.top + pxHeight/2)) && (currentTouch < rect.bottom)) {
+                touches.down = true;
+                touches.up = false;
+            }    
+        }
+
+        function cancelTouch() {
+            touches.up = false;
+            touches.down = false;
+        }
+
+        function touchMove(touchEvent) {
+            touchEvent.preventDefault();
+        }
+
+
+        // store the last ticker update and count down one for the countdown timer
+        function countdown(){
+            // things to do everytime
+            stage.addChild(countDown);
+            ball.reset();
+            playerOne.reset();
+            playerTwo.reset();
+
+            // store last frame updates time
+            currentCount = PIXI.Ticker.shared.lastTime;
+
+            // check if time has elapsed enough
+            if((currentCount - lastCount) > 800){
+                // update the text on screen
+                // I cant figure out why I have a +1 error but its a quick fix
+                countDown.text = count - 1;
+
+                //decrement the count
+                count--;
+
+                // set last count to the current
+                lastCount = currentCount;
+            }
         }
 
         function gameLoop() {
             // check if game ended
-            if (gameFinish === true) {
+            if (gameFinish) {
                 PIXI.Ticker.shared.stop();
+            }
+            // check if game was reset
+            if(reset) {
+                PIXI.Ticker.shared.start();
+                console.log("game was reset");
+                playerOne.reset();
+                playerTwo.reset();
+                ball.reset();
+                reset = false;
+                gameFinish = false;
+                count = 4;
+                stage.removeChild(win);
+            }
+
+            // check if number of players are set and if so start countdown loop
+            if((numPlayers > 0) && !gameStart) {
+                // start countdown cylce
+                countdown()
+                // at end we remove child and start game
+                if (count === 0) {
+                    stage.removeChild(countDown);
+                    gameStart = true;
+                }
             }
 
             // move the ball
             ball.move();
 
-            if(numPlayers > 0) {
+            if((numPlayers > 0) && gameStart) {
                 //if single player or two player is selected player1 plays
                 if(numPlayers >= 1 && numPlayers < 2){
                     // player one UP (W)
-                    if(keys["87"]) {
+                    if(keys["87"] || touches.up) {
                         playerOne.moveUp();
                     }
                     // player one DOWN (S)
-                    if(keys["83"]) {
+                    if(keys["83"] || touches.down) {
                         playerOne.moveDown();
                     }
 
@@ -187,27 +290,26 @@ export default class Render extends React.Component {
         }
 
         function loadPlayers() {
-
+            //store local variables based on current w/h
             const pxW = renderer.screen.width;
             const pxH = renderer.screen.height;
             // 16 pixels since its the 1/2 the width of the paddles
             playerOne = new Player(16, (pxH/2), 0, pxH);
             playerTwo = new Player((pxW-16), (pxH/2), 0, pxH);
 
-
+            // add players to the stage
             stage.addChild(playerOne);
             stage.addChild(playerTwo);
-
         }
 
         function checkScore() {
             // check if player one wins
-            if(playerOne.score === 12){
+            if(playerOne.score === 10){
                 stage.addChild(win);
                 gameFinish = true;
             } 
             // check if player two wins
-            else if(playerTwo.score === 12){
+            else if(playerTwo.score === 10){
                 stage.addChild(win);
                 gameFinish = true;
                 // change text of win for player 2
@@ -219,15 +321,25 @@ export default class Render extends React.Component {
     // update the number of players
     componentDidUpdate() {
         numPlayers = this.state.numPlayers;
-        console.log("compoenent did an update")
-        gameStart = true;
+        console.log("game component did an update")
+        if(this.state.reset) {
+            PIXI.Ticker.shared.start();
+            gameStart = false;
+            reset = true;
+            numPlayers = 0;
+        }
     }
 
     render() {
         return (
-            <div className='gameContainer'>
+            <div>
                 <div id="menu" className = { this.state.started ? "hidden" : "" }>
                 <Menu setPlayerCallback = {this.setPlayers} />
+                </div>
+                <div id="reset" className = { this.state.started ? "reset" : "hidden" }>
+                    <button value={true} onClick={this.reset}>
+                        reset
+                    </button>
                 </div>
             </div>
         )

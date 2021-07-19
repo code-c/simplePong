@@ -10,8 +10,9 @@ export default class ScoreBoard extends PIXI.Text {
         score = generateString(playerOne, playerTwo);
 
         super(score, style);
-        this.x = 255;
-        this.y = 0;
+        this.x = 300;
+        this.y = 30;
+        this.anchor.set(.5,.5)
     
     }
 
