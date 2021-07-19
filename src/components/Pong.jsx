@@ -10,7 +10,7 @@ import Ball from './Ball.js';
 import ScoreBoard from './ScoreBoard.js';
 
 //style
-import '../style.css';
+import './style.css';
 
 // global parameters for PIXI update loop
 let numPlayers; // number of players in the game
@@ -219,15 +219,20 @@ export default class Render extends React.Component {
             }
             // check if game was reset
             if(reset) {
+                // start the ticker 
                 PIXI.Ticker.shared.start();
-                console.log("game was reset");
+                // remove win if the game was ended through a win
+                stage.removeChild(win);
+                // reset values
                 playerOne.reset();
                 playerTwo.reset();
                 ball.reset();
+                // reset initial parameters back to default
                 reset = false;
                 gameFinish = false;
                 count = 4;
-                stage.removeChild(win);
+                // log event
+                console.log("game was reset");
             }
 
             // check if number of players are set and if so start countdown loop
@@ -323,7 +328,9 @@ export default class Render extends React.Component {
         numPlayers = this.state.numPlayers;
         console.log("game component did an update")
         if(this.state.reset) {
+            // start the ticker if the game had finished
             PIXI.Ticker.shared.start();
+            // set initial params back to default values
             gameStart = false;
             reset = true;
             numPlayers = 0;
