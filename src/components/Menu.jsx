@@ -1,4 +1,5 @@
 import React from 'react';
+import Button from "react-bootstrap/Button";
 
 // styles
 import '../style.css';
@@ -38,15 +39,15 @@ export default class Menu extends React.Component {
             <>
             <div className = "menu">
                 <div id="playerSelect" className = { this.state.playerSelect ? "" : "hidden" }>
-                    <button value={1} onClick={this.setPlayers}>
+                    <Button value={1} onClick={this.setPlayers}>
                         One Player
-                    </button>
-                    <button value={2} onClick={this.setPlayers}>
+                    </Button>
+                    <Button value={2} onClick={this.setPlayers}>
                         Two Player
-                    </button>
-                    <button onClick={this.displayRules}>
+                    </Button>
+                    <Button onClick={this.displayRules}>
                         Controls and Rules
-                    </button>
+                    </Button>
                 </div>
             </div>
             <div id="rules" className = { this.state.options ? "rules" : "hidden" }>
@@ -57,9 +58,9 @@ export default class Menu extends React.Component {
                 movement respectively for left paddle <br></br>
                 use arrow keys up and down for right paddle <br></br>
             </p>
-            <button onClick={this.displayPlayerSelect}>
+            <Button onClick={this.displayPlayerSelect}>
                 back
-            </button>
+            </Button>
         </div>
         </>
         )

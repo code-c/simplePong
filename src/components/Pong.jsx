@@ -1,5 +1,6 @@
 import React from 'react';
 import * as PIXI from "pixi.js";
+import Button from "react-bootstrap/Button";
 import Physics from "./physics.js";
 import CPU from "./Cpu.js";
 import Menu from "./Menu";
@@ -115,7 +116,7 @@ export default class Render extends React.Component {
 
         // append to the body
         // use this to place to whatever div you want it in
-        document.getElementById("App").appendChild(renderer.view);
+        document.getElementById("Pong").appendChild(renderer.view);
 
         // listen for keys pressed
         window.addEventListener("keydown", keysDown);
@@ -164,7 +165,7 @@ export default class Render extends React.Component {
 
         function startTouch(touchEvent) {
             // get the coordinates of the game div
-            var rect = document.getElementById("App").getBoundingClientRect();
+            var rect = document.getElementById("Pong").getBoundingClientRect();
             // get the touch location
             const currentTouch = touchEvent.touches[0].screenY;
             // check of touch is in the element on top or bottom and store relavent move
@@ -334,12 +335,12 @@ export default class Render extends React.Component {
         return (
             <div>
                 <div id="menu" className = { this.state.started ? "hidden" : "" }>
-                <Menu setPlayerCallback = {this.setPlayers} />
+                    <Menu setPlayerCallback = {this.setPlayers} />
                 </div>
                 <div id="reset" className = { this.state.started ? "reset" : "hidden" }>
-                    <button value={true} onClick={this.reset}>
+                    <Button value={true} onClick={this.reset}>
                         reset
-                    </button>
+                    </Button>
                 </div>
             </div>
         )

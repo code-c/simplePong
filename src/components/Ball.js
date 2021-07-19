@@ -5,7 +5,6 @@ import * as PIXI from "pixi.js";
 import ballIMG from './images/ball.png';
 
 let ball;
-let ballWidth = 16;
 let initX, initY;
 
 export default class Player extends PIXI.Sprite {

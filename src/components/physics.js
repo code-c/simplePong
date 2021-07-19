@@ -1,5 +1,3 @@
-import * as PIXI from "pixi.js";
-
 let maxWidth, maxHeight;
 let minWidth = 0;
 let minHeight = 0;
@@ -11,14 +9,14 @@ let velocityY = 4;
 let paddleWidth = 16;
 let halfHeight = 24;
 
-let lastBounce = [];
+// let lastBounce = [];
 
 export default class Physics {
     constructor(width = 0, height = 0){
         maxWidth = width;
         maxHeight = height;
         this.inPlay = false;
-        lastBounce = [width/2, height/2]; // initial trajectory vector (x, y, angle)
+        // lastBounce = [width/2, height/2]; // initial trajectory vector (x, y, angle)
     }
 
     checkPositions(playerOne, playerTwo, ball) {
